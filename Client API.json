@@ -1,0 +1,1789 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Go-CRM `Client  API` DOCS Description",
+    "version": "3.0.1",
+    "title": "Go-CRM Client API"
+  },
+  "basePath": "/api/",
+  "tags": [
+    {
+      "name": "auth",
+      "description": "Авторизация / Регистрация"
+    },
+    {
+      "name": "profile",
+      "description": "Информация по профилю"
+    },
+    {
+      "name": "clients",
+      "description": "Информация о клиентах"
+    },
+    {
+      "name": "hours",
+      "description": "Информация по занятиям в расписании"
+    },
+    {
+      "name": "season-tickets",
+      "description": "Информация по продоваемым абонементам"
+    },
+    {
+      "name": "client-season-tickets",
+      "description": "Информация по купленным абонементам"
+    },
+    {
+      "name": "debts",
+      "description": "Информация по задолженности"
+    },
+    {
+      "name": "payments",
+      "description": "Информация по эквайрингу"
+    },
+    {
+      "name": "client-hours",
+      "description": "Информация о занятиях клиента"
+    }
+  ],
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/auth/registration": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Регистрация пользователя",
+        "description": "Метод позволяет зарегистрировать пользователя.\n\nДля регистрации, методу необходимо передать: ФИО пользователя, номер телефона, идентификатор центра, код подтверждения. Если указанные данные верны и регистрация прошла успешно, метод вернет код авторизации.\n\nЕсли методу передать только ФИО пользователя, номер телефона и идентификатор центра, и если пользователь с указанным номер телефона не зарегистрирован, то на указанный номер телефона будет отправлено смс с кодом подтверждения.\n",
+        "operationId": "registration",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "description": "Токен приложения. Генерируется в ЦРМ системе для каждого отдельного приложения",
+            "name": "APP_TOKEN",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "description": "Объект данных для регистрации",
+            "schema": {
+              "type": "object",
+              "required": [
+                "person",
+                "name",
+                "login",
+                "centerId",
+                "birthday"
+              ],
+              "properties": {
+                "person": {
+                  "description": "тип пользователя",
+                  "type": "string",
+                  "enum": [
+                    "client",
+                    "user"
+                  ]
+                },
+                "source": {
+                  "description": "Источник запроса",
+                  "type": "string",
+                  "enum": [
+                    "mobile"
+                  ]
+                },
+                "login": {
+                  "description": "Номер телефона",
+                  "type": "string",
+                  "example": "79510000000"
+                },
+                "name": {
+                  "description": "ФИО пользователя",
+                  "type": "string",
+                  "example": "Иванов Иван Иванович"
+                },
+                "centerId": {
+                  "description": "Идентификатор центра",
+                  "type": "integer",
+                  "example": 1
+                },
+                "birthday": {
+                  "description": "Дата рождения в формате Y-m-d",
+                  "type": "string",
+                  "example": "2024-01-08"
+                },
+                "way": {
+                  "description": "Источник рекламы",
+                  "type": "integer",
+                  "example": 1
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "schema": {
+              "type": "object",
+              "required": [
+                "status",
+                "data"
+              ],
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Статус выполнения операции на сервере",
+                  "example": "success"
+                },
+                "data": {
+                  "type": "object",
+                  "required": [
+                    "accessToken",
+                    "refreshToken"
+                  ],
+                  "properties": {
+                    "accessToken": {
+                      "type": "string",
+                      "description": "токен доступа",
+                      "example": "OQyb4fzNldKWlbY0bbUwdMx4z2QtRwRu7TrprcVxVnJssufWStFdCBrgpWcu"
+                    },
+                    "refreshToken": {
+                      "type": "string",
+                      "description": "токен обновления",
+                      "example": "OQyb4fzNldKWlbY0bbUwdMx4z2QtRwRu7TrprcVxVnJssufWStFdCBrgpWcu"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Error",
+            "schema": {
+              "type": "object",
+              "required": [
+                "message",
+                "errors"
+              ],
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "Сообщение, в случае возникновения ошибки.",
+                  "example": "Error"
+                },
+                "errors": {
+                  "type": "object",
+                  "description": "Описание ошибки",
+                  "properties": {
+                    "fieldName": {
+                      "type": "string",
+                      "example": "Error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Авторизация пользователя",
+        "description": "Метод позволяет получить код авторизации.\n\nДля получения кода авторизации, методу необходимо передать номер телефона пользователя и код подтверждения. Если указанные данные верны, метод вернет код авторизации.\n\nЕсли методу передать только номер телефона пользователя, и если пользователь с указанным номер телефона зарегистрирован, то на указанный номер телефона будет отправлено смс с кодом подтверждения.\n",
+        "operationId": "login",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "description": "Токен приложения. Генерируется в ЦРМ системе для каждого отдельного приложения",
+            "name": "APP_TOKEN",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "description": "Объект данных для авторизации",
+            "schema": {
+              "type": "object",
+              "required": [
+                "person",
+                "login",
+                "password"
+              ],
+              "properties": {
+                "person": {
+                  "description": "тип пользователя",
+                  "type": "string",
+                  "enum": [
+                    "client",
+                    "user"
+                  ]
+                },
+                "login": {
+                  "description": "Номер телефона",
+                  "type": "string",
+                  "example": "79510000000"
+                },
+                "password": {
+                  "description": "Kод подтверждения",
+                  "type": "string",
+                  "example": "0001"
+                },
+                "fcmToken": {
+                  "description": "Токен для отправки пуш уведомлений в мобильное приложение",
+                  "type": "string",
+                  "example": null
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "schema": {
+              "type": "object",
+              "required": [
+                "status",
+                "data"
+              ],
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Статус выполнения операции на сервере",
+                  "example": "success"
+                },
+                "data": {
+                  "type": "object",
+                  "required": [
+                    "accessToken",
+                    "refreshToken"
+                  ],
+                  "properties": {
+                    "accessToken": {
+                      "type": "string",
+                      "description": "токен доступа",
+                      "example": "OQyb4fzNldKWlbY0bbUwdMx4z2QtRwRu7TrprcVxVnJssufWStFdCBrgpWcu"
+                    },
+                    "refreshToken": {
+                      "type": "string",
+                      "description": "токен обновления",
+                      "example": "OQyb4fzNldKWlbY0bbUwdMx4z2QtRwRu7TrprcVxVnJssufWStFdCBrgpWcu"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Error",
+            "schema": {
+              "type": "object",
+              "required": [
+                "message",
+                "errors"
+              ],
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "Сообщение, в случае возникновения ошибки.",
+                  "example": "Error"
+                },
+                "errors": {
+                  "type": "object",
+                  "description": "Описание ошибки",
+                  "properties": {
+                    "fieldName": {
+                      "type": "string",
+                      "example": "Error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Выход",
+        "description": "Метод позволяет выйти из системы.",
+        "operationId": "logout",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "schema": {
+              "type": "object",
+              "required": [
+                "status",
+                "data"
+              ],
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Статус выполнения операции на сервере",
+                  "example": "success"
+                },
+                "data": {
+                  "type": "object",
+                  "required": [
+                    "apiToken"
+                  ],
+                  "example": null
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/profile": {
+      "get": {
+        "tags": [
+          "profile"
+        ],
+        "summary": "Информация по профилю",
+        "description": "Метод позволяет получить информация о текущем авторизованном пользователе.",
+        "operationId": "index",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "schema": {
+              "type": "object",
+              "required": [
+                "type",
+                "id",
+                "centerId",
+                "name",
+                "phone",
+                "mail",
+                "birthday",
+                "photo",
+                "base64photo",
+                "base64Ext"
+              ],
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "тип пользователя",
+                  "enum": [
+                    "client",
+                    "user"
+                  ]
+                },
+                "id": {
+                  "type": "integer",
+                  "description": "id клиента",
+                  "example": 1
+                },
+                "centerId": {
+                  "type": "integer",
+                  "description": "id центра регистрации клиента",
+                  "example": 1
+                },
+                "name": {
+                  "type": "string",
+                  "description": "ФИО клиента",
+                  "example": "Иванов Иван Иванович"
+                },
+                "phone": {
+                  "type": "string",
+                  "description": "телефон клиента",
+                  "example": "79876543210"
+                },
+                "mail": {
+                  "type": "string",
+                  "description": "Электронная почта клиента",
+                  "example": "email@email.com"
+                },
+                "birthday": {
+                  "type": "string",
+                  "description": "Дата рождения клиента в формате Y-m-d",
+                  "example": "2024-01-08"
+                },
+                "photo": {
+                  "type": "string",
+                  "description": "Адрес расположения файла фото в формате /uploads/img_текущеее время в мс - time() . расширение (jpg, png))",
+                  "example": "/uploads/img_1234567.ipg"
+                },
+                "base64photo": {
+                  "type": "string",
+                  "description": "файл фото зашифорованный в строку base64",
+                  "example": "data:image/png;base64,\niVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAQAAAAnOwc2AAAACXBIWXMAAAsTAAALEwEAmpwYAAAA\n82lDQ1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjardA/SgNBHMXx70TULloE67mAgmu15eQPi2AR\nYopsqkxmBw1hd4fZn3/2Bh7B43iDFIIXUVJbqARLwU/1eM2DB+rZDPujzjGUlcRsYvJZPteHGw7Y\nAwDrmmDG4yuAqq48vynYvqEAXk/NsD/ib/ZdiAK8AEnhGwd8AKsHCQJqAfSW6yCgBOitp5MBqCeg\nK/5RAAZ1aOPq5lb0eZqm2hT10uvrthFfNvqycnUMdbTiC+B7A+Aoi7bVmS1Lq5OzhH83y+f6K71P\nUYA62ey6HXcX73/+7FzAJ0sbODDOTdGSAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAA\nADqYAAAXb5JfxUYAAACRSURBVHjaBMFdS4NgGADQ89Kjk5z0QXWxDeq26D/2Q+siRjQMa0xNpm3V\nOekpCZlcJjn6MTmEzMxc5VSY9FpDyFRuLF3J9WobTShcuHXvTunTM8ZQOLfy4NFcLdlqwomZyrWF\nM8mlUh5+Hez1On86g9ExTDq1F0mp8arxHUZba8mHws67jS6MWgzehL3Wl/5/AGY7NAWQ1C5yAAAA\nAElFTkSuQmCC "
+                },
+                "base64Ext": {
+                  "type": "string",
+                  "description": "расширение у зашифрованного фото",
+                  "example": "jpg"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Error",
+            "schema": {
+              "type": "object",
+              "required": [
+                "message",
+                "errors"
+              ],
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "Сообщение, в случае возникновения ошибки.",
+                  "example": "Error"
+                },
+                "errors": {
+                  "type": "object",
+                  "description": "Описание ошибки",
+                  "properties": {
+                    "fieldName": {
+                      "type": "string",
+                      "example": "Error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/profile/": {
+      "put": {
+        "tags": [
+          "profile"
+        ],
+        "summary": "Обновление информация по профилю",
+        "description": "Метод позволяет обновить информация о текущем авторизованном пользователе.",
+        "operationId": "update",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "description": "Объект данных для обновления информации",
+            "schema": {
+              "type": "object",
+              "required": [
+                "name",
+                "birthday",
+                "phone"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "ФИО клиента",
+                  "example": "Иванов Иван Иванович"
+                },
+                "birthday": {
+                  "type": "string",
+                  "description": "Дата рождения клиента в формате Y-m-d",
+                  "example": "2024-01-08"
+                },
+                "phone": {
+                  "type": "string",
+                  "description": "телефон клиента",
+                  "example": "79876543210"
+                },
+                "mail": {
+                  "type": "string",
+                  "description": "Электронная почта клиента",
+                  "example": "email@email.com"
+                },
+                "base64photo": {
+                  "type": "string",
+                  "description": "файл фото зашифорованный в строку base64",
+                  "example": "data:image/png;base64,\niVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAQAAAAnOwc2AAAACXBIWXMAAAsTAAALEwEAmpwYAAAA\n82lDQ1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjardA/SgNBHMXx70TULloE67mAgmu15eQPi2AR\nYopsqkxmBw1hd4fZn3/2Bh7B43iDFIIXUVJbqARLwU/1eM2DB+rZDPujzjGUlcRsYvJZPteHGw7Y\nAwDrmmDG4yuAqq48vynYvqEAXk/NsD/ib/ZdiAK8AEnhGwd8AKsHCQJqAfSW6yCgBOitp5MBqCeg\nK/5RAAZ1aOPq5lb0eZqm2hT10uvrthFfNvqycnUMdbTiC+B7A+Aoi7bVmS1Lq5OzhH83y+f6K71P\nUYA62ey6HXcX73/+7FzAJ0sbODDOTdGSAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAA\nADqYAAAXb5JfxUYAAACRSURBVHjaBMFdS4NgGADQ89Kjk5z0QXWxDeq26D/2Q+siRjQMa0xNpm3V\nOekpCZlcJjn6MTmEzMxc5VSY9FpDyFRuLF3J9WobTShcuHXvTunTM8ZQOLfy4NFcLdlqwomZyrWF\nM8mlUh5+Hez1On86g9ExTDq1F0mp8arxHUZba8mHws67jS6MWgzehL3Wl/5/AGY7NAWQ1C5yAAAA\nAElFTkSuQmCC "
+                },
+                "base64Ext": {
+                  "type": "string",
+                  "description": "расширение у зашифрованного фото",
+                  "example": "jpg"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "schema": {
+              "type": "object",
+              "required": [
+                "type",
+                "id",
+                "centerId",
+                "name",
+                "phone",
+                "mail",
+                "birthday",
+                "photo",
+                "base64photo",
+                "base64Ext"
+              ],
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "тип пользователя",
+                  "enum": [
+                    "client",
+                    "user"
+                  ]
+                },
+                "id": {
+                  "type": "integer",
+                  "description": "id клиента",
+                  "example": "123456"
+                },
+                "centerId": {
+                  "type": "integer",
+                  "description": "id центра регистрации клиента",
+                  "example": "1"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "ФИО клиента",
+                  "example": "Иванов Иван Иванович"
+                },
+                "phone": {
+                  "type": "string",
+                  "description": "телефон клиента",
+                  "example": "79876543210"
+                },
+                "mail": {
+                  "type": "string",
+                  "description": "Электронная почта клиента",
+                  "example": "email@email.com"
+                },
+                "birthday": {
+                  "type": "string",
+                  "description": "Дата рождения клиента в формате Y-m-d",
+                  "example": "2024-01-08"
+                },
+                "base64photo": {
+                  "type": "string",
+                  "description": "файл фото зашифорованный в строку base64",
+                  "example": "data:image/png;base64,\niVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAQAAAAnOwc2AAAACXBIWXMAAAsTAAALEwEAmpwYAAAA\n82lDQ1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjardA/SgNBHMXx70TULloE67mAgmu15eQPi2AR\nYopsqkxmBw1hd4fZn3/2Bh7B43iDFIIXUVJbqARLwU/1eM2DB+rZDPujzjGUlcRsYvJZPteHGw7Y\nAwDrmmDG4yuAqq48vynYvqEAXk/NsD/ib/ZdiAK8AEnhGwd8AKsHCQJqAfSW6yCgBOitp5MBqCeg\nK/5RAAZ1aOPq5lb0eZqm2hT10uvrthFfNvqycnUMdbTiC+B7A+Aoi7bVmS1Lq5OzhH83y+f6K71P\nUYA62ey6HXcX73/+7FzAJ0sbODDOTdGSAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAA\nADqYAAAXb5JfxUYAAACRSURBVHjaBMFdS4NgGADQ89Kjk5z0QXWxDeq26D/2Q+siRjQMa0xNpm3V\nOekpCZlcJjn6MTmEzMxc5VSY9FpDyFRuLF3J9WobTShcuHXvTunTM8ZQOLfy4NFcLdlqwomZyrWF\nM8mlUh5+Hez1On86g9ExTDq1F0mp8arxHUZba8mHws67jS6MWgzehL3Wl/5/AGY7NAWQ1C5yAAAA\nAElFTkSuQmCC "
+                },
+                "base64Ext": {
+                  "type": "string",
+                  "description": "расширение у зашифрованного фото",
+                  "example": "jpg"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Error",
+            "schema": {
+              "type": "object",
+              "required": [
+                "message",
+                "errors"
+              ],
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "Сообщение, в случае возникновения ошибки.",
+                  "example": "Error"
+                },
+                "errors": {
+                  "type": "object",
+                  "description": "Описание ошибки",
+                  "properties": {
+                    "fieldName": {
+                      "type": "string",
+                      "example": "Error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/clients": {
+      "get": {
+        "tags": [
+          "clients"
+        ],
+        "summary": "Информация по клиентам",
+        "description": "Метод позволяет получить информацию о клиентах.",
+        "operationId": "index",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "schema": {
+              "type": "object",
+              "required": [
+                "data"
+              ],
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "description": "Массив клиентов",
+                  "example": [
+                    {
+                      "id": 1,
+                      "fio": "Иванов Иван Иванович",
+                      "name": "Ваня",
+                      "phone": "79876543210",
+                      "birthday": "2024-01-08"
+                    },
+                    {
+                      "id": 2,
+                      "fio": "Сидоров Иван Иванович",
+                      "name": "Алена",
+                      "phone": "79876543211",
+                      "birthday": "2024-01-07"
+                    }
+                  ]
+                }
+
+              }
+            }
+          },
+          "422": {
+            "description": "Error",
+            "schema": {
+              "type": "object",
+              "required": [
+                "message",
+                "errors"
+              ],
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "Сообщение, в случае возникновения ошибки.",
+                  "example": "Error"
+                },
+                "errors": {
+                  "type": "object",
+                  "description": "Описание ошибки",
+                  "properties": {
+                    "fieldName": {
+                      "type": "string",
+                      "example": "Error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/clients/(:num)": {
+      "get": {
+        "tags": [
+          "clients"
+        ],
+        "summary": "Обновление информация по клиенту",
+        "description": "Метод позволяет получить информация о клиенте.",
+        "operationId": "show",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "description": "Информации по клиенту",
+            "schema": {
+              "type": "object",
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "description": "id клиента",
+                  "example": 1
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "schema": {
+              "type": "object",
+              "required": [
+                "id",
+                "fio",
+                "name",
+                "phone",
+                "birthday"
+              ],
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "description": "id клиента",
+                  "example": 1
+                },
+                "fio": {
+                  "type": "string",
+                  "description": "ФИО клиента",
+                  "example": "Иванов Иван Иванович"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "имя ребенка",
+                  "example": "Ваня"
+                },
+                "phone": {
+                  "type": "string",
+                  "description": "телефон клиента",
+                  "example": "79876543210"
+                },
+                "birthday": {
+                  "type": "string",
+                  "description": "Дата рождения клиента в формате Y-m-d",
+                  "example": "2024-01-08"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Error",
+            "schema": {
+              "type": "object",
+              "required": [
+                "message",
+                "errors"
+              ],
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "Сообщение, в случае возникновения ошибки.",
+                  "example": "Error"
+                },
+                "errors": {
+                  "type": "object",
+                  "description": "Описание ошибки",
+                  "properties": {
+                    "fieldName": {
+                      "type": "string",
+                      "example": "Error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/hours": {
+      "get": {
+        "tags": [
+          "hours"
+        ],
+        "summary": "Информация по расписанию",
+        "description": "Метод позволяет получить информацию о занятиях в расписании.",
+        "operationId": "index",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "description": "Объект данных из get",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "center": {
+                  "type": "integer",
+                  "description": "id центра",
+                  "example": 1
+                },
+                "schedules": {
+                  "type": "integer",
+                  "description": "id помещения",
+                  "example": 1
+                },
+                "instructors": {
+                  "type": "integer",
+                  "description": "id интструктора",
+                  "example": 1
+                },
+                "typesExercises": {
+                  "type": "integer",
+                  "description": "id типа занятия",
+                  "example": 1
+                },
+                "dateStart": {
+                  "type": "string",
+                  "description": "начало периода фильтрации в формате Y-m-d H:i:s",
+                  "example": "2024-01-20 00:00:00"
+                },
+                "dateEnd": {
+                  "type": "string",
+                  "description": "окончание периода фильтрации в формате Y-m-d H:i:s",
+                  "example": "2024-01-25 23:59:59"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "schema": {
+              "type": "object",
+              "required": [
+                "data"
+              ],
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "description": "Массив занятий",
+                  "example": [
+                    {
+                      "id": 1,
+                      "datetime": "2024-01-07 10:00:00",
+                      "center":  1,
+                      "comment": "Капризный ребенок",
+                      "schedule": 1,
+                      "instructors": [1,2,3],
+                      "duration": 60,
+                      "typesExercise": 1,
+                      "service": 1,
+                      "version": 1,
+                      "cnt": 4,
+                      "isSigned": true,
+                      "checkIndividual": true
+                    },
+                    {
+                      "id": 2,
+                      "datetime": "2024-01-07 12:00:00",
+                      "center":  1,
+                      "comment": "Капризный родитель",
+                      "schedule": 1,
+                      "instructors": [1,2,3],
+                      "duration": 60,
+                      "typesExercise": 2,
+                      "service": 1,
+                      "version": 1,
+                      "cnt": 1,
+                      "isSigned": true,
+                      "checkIndividual": true
+                    }
+                  ]
+                }
+
+              }
+            }
+          },
+          "422": {
+            "description": "Error",
+            "schema": {
+              "type": "object",
+              "required": [
+                "message",
+                "errors"
+              ],
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "Сообщение, в случае возникновения ошибки.",
+                  "example": "Error"
+                },
+                "errors": {
+                  "type": "object",
+                  "description": "Описание ошибки",
+                  "properties": {
+                    "fieldName": {
+                      "type": "string",
+                      "example": "Error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/season-tickets": {
+      "get": {
+        "tags": [
+          "season-tickets"
+        ],
+        "summary": "Информация по абонементам",
+        "description": "Метод позволяет получить информацию по продоваемым абонементам.",
+        "operationId": "index",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "description": "Объект данных из get",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "serviceId": {
+                  "type": "integer",
+                  "description": "id услуги",
+                  "example": 1
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "schema": {
+              "type": "object",
+              "required": [
+                "data"
+              ],
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "description": "Массив абонементов",
+                  "example": [
+                    {
+                      "id": 1,
+                      "name": "Плавание инд. 4 занятия",
+                      "common": true,
+                      "numberExercise": 4,
+                      "price": 2000.00,
+                      "currency": "руб.",
+                      "pointsPrice": 0,
+                      "description": "",
+                      "validity": 1,
+                      "periodTypeId": 1,
+                      "periodType": "Дней",
+                      "exerciseTypeId": 2,
+                      "exerciseType": "Индивидуальное",
+                      "startedTypeId": 1,
+                      "startedType": "С момента покупки",
+                      "center": 1
+                    },
+                    {
+                      "id": 2,
+                      "name": "Плавание груп. 8 занятия",
+                      "common": true,
+                      "numberExercise": 8,
+                      "price": 3000.00,
+                      "currency": "руб.",
+                      "pointsPrice": 0,
+                      "description": "",
+                      "validity": 1,
+                      "periodTypeId": 1,
+                      "periodType": "Дней",
+                      "exerciseTypeId": 1,
+                      "exerciseType": "Групповое",
+                      "startedTypeId": 1,
+                      "startedType": "С момента покупки",
+                      "center": 1
+                    }
+                  ]
+                }
+
+              }
+            }
+          },
+          "422": {
+            "description": "Error",
+            "schema": {
+              "type": "object",
+              "required": [
+                "message",
+                "errors"
+              ],
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "Сообщение, в случае возникновения ошибки.",
+                  "example": "Error"
+                },
+                "errors": {
+                  "type": "object",
+                  "description": "Описание ошибки",
+                  "properties": {
+                    "fieldName": {
+                      "type": "string",
+                      "example": "Error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/client-season-tickets": {
+      "get": {
+        "tags": [
+          "client-season-tickets"
+        ],
+        "summary": "Информация по бонементам клиента",
+        "description": "Метод позволяет получить информацию по купленным абонементам.",
+        "operationId": "index",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "schema": {
+              "type": "object",
+              "required": [
+                "data"
+              ],
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "description": "Массив абонементов",
+                  "example": [
+                    {
+                      "id": 1,
+                      "clientId": 1,
+                      "seasonTicketId": 1,
+                      "seasonTicketName": "Плавание инд. 4 занятия",
+                      "exerciseTypeId": 2,
+                      "exerciseTypeName": "Индивидуальное",
+                      "price": 2000.00,
+                      "numberExercise": 4,
+                      "startedTypeId": 1,
+                      "startedTypeName": "С момента покупки",
+                      "periodTypeId": 1,
+                      "periodTypeName": "Дней",
+                      "blockTypeId": 1,
+                      "blockTypeName": "Активный",
+                      "createdAt": "2024-01-24 13:23:12",
+                      "balance": 4,
+                      "validity": 1,
+                      "validityDate": "2024-05-24",
+                      "validityDays": 30
+                    },
+                    {
+                      "id": 2,
+                      "clientId": 1,
+                      "seasonTicketId": 2,
+                      "seasonTicketName": "Плавание груп. 8 занятия",
+                      "exerciseTypeId": 1,
+                      "exerciseTypeName": "Групповое",
+                      "price": 3000.00,
+                      "numberExercise": 8,
+                      "startedTypeId": 1,
+                      "startedTypeName": "С момента покупки",
+                      "periodTypeId": 1,
+                      "periodTypeName": "Дней",
+                      "blockTypeId": 1,
+                      "blockTypeName": "Активный",
+                      "createdAt": "2024-01-24 13:23:12",
+                      "balance": 4,
+                      "validity": 1,
+                      "validityDate": "2024-05-24",
+                      "validityDays": 30
+                    }
+                  ]
+                }
+
+              }
+            }
+          },
+          "422": {
+            "description": "Error",
+            "schema": {
+              "type": "object",
+              "required": [
+                "message",
+                "errors"
+              ],
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "Сообщение, в случае возникновения ошибки.",
+                  "example": "Error"
+                },
+                "errors": {
+                  "type": "object",
+                  "description": "Описание ошибки",
+                  "properties": {
+                    "fieldName": {
+                      "type": "string",
+                      "example": "Error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/debts": {
+      "get": {
+        "tags": [
+          "debts"
+        ],
+        "summary": "Информация о задолженности",
+        "description": "Метод позволяет получить информацию о задолженности.",
+        "operationId": "index",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "schema": {
+              "type": "object",
+              "required": [
+                "data"
+              ],
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "description": "Массив задолженности",
+                  "example": [
+                    {
+                      "centerId": 1,
+                      "city": 1,
+                      "address": "ул.Ленина, д.14",
+                      "money": 1000.00,
+                      "currency": "руб."
+                    },
+                    {
+                      "centerId": 2,
+                      "city": 1,
+                      "address": "ул.Победы, д.24",
+                      "money": 500.00,
+                      "currency": "руб."
+                    }
+                  ]
+                }
+
+              }
+            }
+          },
+          "422": {
+            "description": "Error",
+            "schema": {
+              "type": "object",
+              "required": [
+                "message",
+                "errors"
+              ],
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "Сообщение, в случае возникновения ошибки.",
+                  "example": "Error"
+                },
+                "errors": {
+                  "type": "object",
+                  "description": "Описание ошибки",
+                  "properties": {
+                    "fieldName": {
+                      "type": "string",
+                      "example": "Error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payments": {
+      "get": {
+        "tags": [
+          "payments"
+        ],
+        "summary": "Информация по эквайрингу",
+        "description": "Метод позволяет получить информацию по эквайрингу.",
+        "operationId": "index",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "schema": {
+              "type": "object",
+              "required": [
+                "data"
+              ],
+              "properties": {
+                "data": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Error",
+            "schema": {
+              "type": "object",
+              "required": [
+                "message",
+                "errors"
+              ],
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "Сообщение, в случае возникновения ошибки.",
+                  "example": "Error"
+                },
+                "errors": {
+                  "type": "object",
+                  "description": "Описание ошибки",
+                  "properties": {
+                    "fieldName": {
+                      "type": "string",
+                      "example": "Error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payments/": {
+      "put": {
+        "tags": [
+          "payments"
+        ],
+        "summary": "Информация по проведению платежа",
+        "description": "Метод позволяет обновить информацию по проведению платежа.",
+        "operationId": "create",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "description": "Объект данных для обновления информации",
+            "schema": {
+              "type": "object",
+              "required": [
+                "type",
+                "id"
+              ],
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "",
+                  "example": ""
+                },
+                "id": {
+                  "type": "integer",
+                  "description": "id абонемента",
+                  "example": 1
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "errorCode": {
+                  "type": "string",
+                  "description": "Код ошибки",
+                  "example": "304"
+                },
+                "error": {
+                  "type": "string",
+                  "description": "Описание ошибки",
+                  "example": "Нет связи с банком"
+                },
+                "paymentUrl": {
+                  "type": "string",
+                  "description": "Сгенерированный адрес для перехода на страницу платежа банка",
+                  "example": "https://yoomoney.ru/api-pages/v2/payment-confirm/cash?orderId=22c5d3e2-000f-5000-8000-10a783a9392b"
+                },
+                "paymentId": {
+                  "type": "integer",
+                  "description": "id платежа",
+                  "example": 1
+                },
+                "status": {
+                  "type": "string",
+                  "description": "Статус формирвоания платежа",
+                  "example": "Success"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Error",
+            "schema": {
+              "type": "object",
+              "required": [
+                "message",
+                "errors"
+              ],
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "Сообщение, в случае возникновения ошибки.",
+                  "example": "Error"
+                },
+                "errors": {
+                  "type": "object",
+                  "description": "Описание ошибки",
+                  "properties": {
+                    "fieldName": {
+                      "type": "string",
+                      "example": "Error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/client-hours": {
+      "get": {
+        "tags": [
+          "client-hours"
+        ],
+        "summary": "Информация о занятиях клиента",
+        "description": "Метод позволяет получить информацию о занятиях клиента.",
+        "operationId": "index",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "description": "Объект данных для обновления информации",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "clientId": {
+                  "type": "integer",
+                  "description": "id клиента",
+                  "example": 1
+                },
+                "centerId": {
+                  "type": "integer",
+                  "description": "id центра",
+                  "example": 1
+                },
+                "dateStart": {
+                  "type": "string",
+                  "description": "начало периода фильтрации в формате Y-m-d H:i:s",
+                  "example": "2024-01-20 00:00:00"
+                },
+                "visited": {
+                  "type": "integer",
+                  "description": "Параметр посещения занятия",
+                  "example": 1
+                },
+                "missed": {
+                  "type": "integer",
+                  "description": "Параметр пропуска занятия",
+                  "example": 0
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "schema": {
+              "type": "object",
+              "required": [
+                "data"
+              ],
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "description": "Массив занятий клиента за период",
+                  "example": [
+                    {
+                      "id": 1,
+                      "individual": true,
+                      "trial": false,
+                      "visited": "visited",
+                      "missed": "",
+                      "hour": [
+                        {
+                          "id": 2,
+                          "datetime": "2024-01-07 12:00:00",
+                          "center":  1,
+                          "comment": "Капризный родитель",
+                          "schedule": 1,
+                          "instructors": [1,2,3],
+                          "duration": 60,
+                          "typesExercise": 2,
+                          "service": 1,
+                          "version": 1,
+                          "cnt": 1,
+                          "isSigned": true,
+                          "checkIndividual": true
+                        }
+                      ]
+                    },
+                    {
+                      "id": 2,
+                      "individual": false,
+                      "trial": false,
+                      "visited": "",
+                      "missed": "missed",
+                      "hour": [
+                        {
+                          "id": 2,
+                          "datetime": "2024-01-07 12:00:00",
+                          "center":  1,
+                          "comment": "Капризный родитель",
+                          "schedule": 1,
+                          "instructors": [1,2,3],
+                          "duration": 60,
+                          "typesExercise": 2,
+                          "service": 1,
+                          "version": 1,
+                          "cnt": 1,
+                          "isSigned": true,
+                          "checkIndividual": true
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Error",
+            "schema": {
+              "type": "object",
+              "required": [
+                "message",
+                "errors"
+              ],
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "Сообщение, в случае возникновения ошибки.",
+                  "example": "Error"
+                },
+                "errors": {
+                  "type": "object",
+                  "description": "Описание ошибки",
+                  "properties": {
+                    "fieldName": {
+                      "type": "string",
+                      "example": "Error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/client-hours/": {
+      "post": {
+        "tags": [
+          "client-hours"
+        ],
+        "summary": "Информация по записи клиента на занятие",
+        "description": "Метод позволяет обновить информацию по записи клиента на занятие.",
+        "operationId": "create",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "description": "Объект данных для обновления информации",
+            "schema": {
+              "type": "object",
+              "required": [
+                "hourId",
+                "individual",
+                "version"
+              ],
+              "properties": {
+                "hourId": {
+                  "type": "integer",
+                  "description": "id занятия",
+                  "example": 1
+                },
+                "individual": {
+                  "type": "integer",
+                  "description": "параметр типа занятия",
+                  "example": "1"
+                },
+                "version": {
+                  "type": "integer",
+                  "description": "версия занятия",
+                  "example": 1
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "description": "id занятия клиента",
+                  "example": 1
+                },
+                "individual": {
+                  "type": "boolean",
+                  "description": "тип занятия",
+                  "example": true
+                },
+                "trial": {
+                  "type": "boolean",
+                  "description": "пробное занятие",
+                  "example": true
+                },
+                "visited": {
+                  "type": "string",
+                  "description": "Параметр посещения занятия",
+                  "example": "visited"
+                },
+                "missed": {
+                  "type": "string",
+                  "description": "Параметр пропуска занятия",
+                  "example": "missed"
+                },
+                "hour": {
+                  "type": "array",
+                  "description": "массив занятий",
+                  "example": [
+                    {
+                      "id": 2,
+                      "datetime": "2024-01-07 12:00:00",
+                      "center":  1,
+                      "comment": "Капризный родитель",
+                      "schedule": 1,
+                      "instructors": [1,2,3],
+                      "duration": 60,
+                      "typesExercise": 2,
+                      "service": 1,
+                      "version": 1,
+                      "cnt": 1,
+                      "isSigned": true,
+                      "checkIndividual": true
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Error",
+            "schema": {
+              "type": "object",
+              "required": [
+                "message",
+                "errors"
+              ],
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "Сообщение, в случае возникновения ошибки.",
+                  "example": "Error"
+                },
+                "errors": {
+                  "type": "object",
+                  "description": "Описание ошибки",
+                  "properties": {
+                    "fieldName": {
+                      "type": "string",
+                      "example": "Error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "Authorization"
+    }
+  }
+}

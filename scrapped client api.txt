@@ -1,0 +1,963 @@
+Go-CRM Client API DOCS
+RETURN Go-CRM DEV DOCS
+Go-CRM Client API
+ 3.0.1 
+[ Base URL: /api/ ]
+/mobile.json
+Go-CRM Client API DOCS Description
+
+Schemes
+
+https
+Authorize
+auth
+Авторизация / Регистрация
+
+
+POST
+​/auth​/registration
+Регистрация пользователя
+Метод позволяет зарегистрировать пользователя.
+
+Для регистрации, методу необходимо передать: ФИО пользователя, номер телефона, идентификатор центра, код подтверждения. Если указанные данные верны и регистрация прошла успешно, метод вернет код авторизации.
+
+Если методу передать только ФИО пользователя, номер телефона и идентификатор центра, и если пользователь с указанным номер телефона не зарегистрирован, то на указанный номер телефона будет отправлено смс с кодом подтверждения.
+
+Parameters
+Try it out
+Name	Description
+APP_TOKEN *
+string
+(header)
+Токен приложения. Генерируется в ЦРМ системе для каждого отдельного приложения
+
+APP_TOKEN - Токен приложения. Генерируется в ЦРМ системе для каждого отдельного приложения
+body *
+object
+(body)
+Объект данных для регистрации
+
+Example Value
+Model
+{
+  "person": "client",
+  "source": "mobile",
+  "login": "79510000000",
+  "name": "Иванов Иван Иванович",
+  "centerId": 1,
+  "birthday": "2024-01-08",
+  "way": 1
+}
+Parameter content type
+
+application/json
+Responses
+Response content type
+
+application/json
+Code	Description
+200	
+Ok
+
+Example Value
+Model
+{
+  "status": "success",
+  "data": {
+    "accessToken": "OQyb4fzNldKWlbY0bbUwdMx4z2QtRwRu7TrprcVxVnJssufWStFdCBrgpWcu",
+    "refreshToken": "OQyb4fzNldKWlbY0bbUwdMx4z2QtRwRu7TrprcVxVnJssufWStFdCBrgpWcu"
+  }
+}
+422	
+Error
+
+Example Value
+Model
+{
+  "message": "Error",
+  "errors": {
+    "fieldName": "Error"
+  }
+}
+POST
+​/auth​/login
+Авторизация пользователя
+
+Метод позволяет получить код авторизации.
+
+Для получения кода авторизации, методу необходимо передать номер телефона пользователя и код подтверждения. Если указанные данные верны, метод вернет код авторизации.
+
+Если методу передать только номер телефона пользователя, и если пользователь с указанным номер телефона зарегистрирован, то на указанный номер телефона будет отправлено смс с кодом подтверждения.
+
+Parameters
+Try it out
+Name	Description
+APP_TOKEN *
+string
+(header)
+Токен приложения. Генерируется в ЦРМ системе для каждого отдельного приложения
+
+APP_TOKEN - Токен приложения. Генерируется в ЦРМ системе для каждого отдельного приложения
+body *
+object
+(body)
+Объект данных для авторизации
+
+Example Value
+Model
+{
+  "person": "client",
+  "login": "79510000000",
+  "password": "0001",
+  "fcmToken": null
+}
+Parameter content type
+
+application/json
+Responses
+Response content type
+
+application/json
+Code	Description
+200	
+Ok
+
+Example Value
+Model
+{
+  "status": "success",
+  "data": {
+    "accessToken": "OQyb4fzNldKWlbY0bbUwdMx4z2QtRwRu7TrprcVxVnJssufWStFdCBrgpWcu",
+    "refreshToken": "OQyb4fzNldKWlbY0bbUwdMx4z2QtRwRu7TrprcVxVnJssufWStFdCBrgpWcu"
+  }
+}
+422	
+Error
+
+Example Value
+Model
+{
+  "message": "Error",
+  "errors": {
+    "fieldName": "Error"
+  }
+}
+POST
+​/auth​/logout
+Выход
+
+Метод позволяет выйти из системы.
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Response content type
+
+application/json
+Code	Description
+200	
+Ok
+
+Example Value
+Model
+{
+  "status": "success",
+  "data": null
+}
+profile
+Информация по профилю
+
+
+GET
+​/profile
+Информация по профилю
+
+Метод позволяет получить информация о текущем авторизованном пользователе.
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Response content type
+
+application/json
+Code	Description
+200	
+Ok
+
+Example Value
+Model
+{
+  "type": "client",
+  "id": 1,
+  "centerId": 1,
+  "name": "Иванов Иван Иванович",
+  "phone": "79876543210",
+  "mail": "email@email.com",
+  "birthday": "2024-01-08",
+  "photo": "/uploads/img_1234567.ipg",
+  "base64photo": "data:image/png;base64,\niVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAQAAAAnOwc2AAAACXBIWXMAAAsTAAALEwEAmpwYAAAA\n82lDQ1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjardA/SgNBHMXx70TULloE67mAgmu15eQPi2AR\nYopsqkxmBw1hd4fZn3/2Bh7B43iDFIIXUVJbqARLwU/1eM2DB+rZDPujzjGUlcRsYvJZPteHGw7Y\nAwDrmmDG4yuAqq48vynYvqEAXk/NsD/ib/ZdiAK8AEnhGwd8AKsHCQJqAfSW6yCgBOitp5MBqCeg\nK/5RAAZ1aOPq5lb0eZqm2hT10uvrthFfNvqycnUMdbTiC+B7A+Aoi7bVmS1Lq5OzhH83y+f6K71P\nUYA62ey6HXcX73/+7FzAJ0sbODDOTdGSAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAA\nADqYAAAXb5JfxUYAAACRSURBVHjaBMFdS4NgGADQ89Kjk5z0QXWxDeq26D/2Q+siRjQMa0xNpm3V\nOekpCZlcJjn6MTmEzMxc5VSY9FpDyFRuLF3J9WobTShcuHXvTunTM8ZQOLfy4NFcLdlqwomZyrWF\nM8mlUh5+Hez1On86g9ExTDq1F0mp8arxHUZba8mHws67jS6MWgzehL3Wl/5/AGY7NAWQ1C5yAAAA\nAElFTkSuQmCC ",
+  "base64Ext": "jpg"
+}
+422	
+Error
+
+Example Value
+Model
+{
+  "message": "Error",
+  "errors": {
+    "fieldName": "Error"
+  }
+}
+PUT
+​/profile​/
+Обновление информация по профилю
+
+Метод позволяет обновить информация о текущем авторизованном пользователе.
+
+Parameters
+Try it out
+Name	Description
+body *
+object
+(body)
+Объект данных для обновления информации
+
+Example Value
+Model
+{
+  "name": "Иванов Иван Иванович",
+  "birthday": "2024-01-08",
+  "phone": "79876543210",
+  "mail": "email@email.com",
+  "base64photo": "data:image/png;base64,\niVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAQAAAAnOwc2AAAACXBIWXMAAAsTAAALEwEAmpwYAAAA\n82lDQ1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjardA/SgNBHMXx70TULloE67mAgmu15eQPi2AR\nYopsqkxmBw1hd4fZn3/2Bh7B43iDFIIXUVJbqARLwU/1eM2DB+rZDPujzjGUlcRsYvJZPteHGw7Y\nAwDrmmDG4yuAqq48vynYvqEAXk/NsD/ib/ZdiAK8AEnhGwd8AKsHCQJqAfSW6yCgBOitp5MBqCeg\nK/5RAAZ1aOPq5lb0eZqm2hT10uvrthFfNvqycnUMdbTiC+B7A+Aoi7bVmS1Lq5OzhH83y+f6K71P\nUYA62ey6HXcX73/+7FzAJ0sbODDOTdGSAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAA\nADqYAAAXb5JfxUYAAACRSURBVHjaBMFdS4NgGADQ89Kjk5z0QXWxDeq26D/2Q+siRjQMa0xNpm3V\nOekpCZlcJjn6MTmEzMxc5VSY9FpDyFRuLF3J9WobTShcuHXvTunTM8ZQOLfy4NFcLdlqwomZyrWF\nM8mlUh5+Hez1On86g9ExTDq1F0mp8arxHUZba8mHws67jS6MWgzehL3Wl/5/AGY7NAWQ1C5yAAAA\nAElFTkSuQmCC ",
+  "base64Ext": "jpg"
+}
+Parameter content type
+
+application/json
+Responses
+Response content type
+
+application/json
+Code	Description
+200	
+Ok
+
+Example Value
+Model
+{
+  "type": "client",
+  "id": "123456",
+  "centerId": "1",
+  "name": "Иванов Иван Иванович",
+  "phone": "79876543210",
+  "mail": "email@email.com",
+  "birthday": "2024-01-08",
+  "base64photo": "data:image/png;base64,\niVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAQAAAAnOwc2AAAACXBIWXMAAAsTAAALEwEAmpwYAAAA\n82lDQ1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjardA/SgNBHMXx70TULloE67mAgmu15eQPi2AR\nYopsqkxmBw1hd4fZn3/2Bh7B43iDFIIXUVJbqARLwU/1eM2DB+rZDPujzjGUlcRsYvJZPteHGw7Y\nAwDrmmDG4yuAqq48vynYvqEAXk/NsD/ib/ZdiAK8AEnhGwd8AKsHCQJqAfSW6yCgBOitp5MBqCeg\nK/5RAAZ1aOPq5lb0eZqm2hT10uvrthFfNvqycnUMdbTiC+B7A+Aoi7bVmS1Lq5OzhH83y+f6K71P\nUYA62ey6HXcX73/+7FzAJ0sbODDOTdGSAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAA\nADqYAAAXb5JfxUYAAACRSURBVHjaBMFdS4NgGADQ89Kjk5z0QXWxDeq26D/2Q+siRjQMa0xNpm3V\nOekpCZlcJjn6MTmEzMxc5VSY9FpDyFRuLF3J9WobTShcuHXvTunTM8ZQOLfy4NFcLdlqwomZyrWF\nM8mlUh5+Hez1On86g9ExTDq1F0mp8arxHUZba8mHws67jS6MWgzehL3Wl/5/AGY7NAWQ1C5yAAAA\nAElFTkSuQmCC ",
+  "base64Ext": "jpg"
+}
+422	
+Error
+
+Example Value
+Model
+{
+  "message": "Error",
+  "errors": {
+    "fieldName": "Error"
+  }
+}
+clients
+Информация о клиентах
+
+
+GET
+​/clients
+Информация по клиентам
+
+Метод позволяет получить информацию о клиентах.
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Response content type
+
+application/json
+Code	Description
+200	
+Ok
+
+Example Value
+Model
+{
+  "data": [
+    {
+      "id": 1,
+      "fio": "Иванов Иван Иванович",
+      "name": "Ваня",
+      "phone": "79876543210",
+      "birthday": "2024-01-08"
+    },
+    {
+      "id": 2,
+      "fio": "Сидоров Иван Иванович",
+      "name": "Алена",
+      "phone": "79876543211",
+      "birthday": "2024-01-07"
+    }
+  ]
+}
+422	
+Error
+
+Example Value
+Model
+{
+  "message": "Error",
+  "errors": {
+    "fieldName": "Error"
+  }
+}
+GET
+​/clients​/(:num)
+Обновление информация по клиенту
+
+Метод позволяет получить информация о клиенте.
+
+Parameters
+Try it out
+Name	Description
+body *
+object
+(body)
+Информации по клиенту
+
+Example Value
+Model
+{
+  "id": 1
+}
+Parameter content type
+
+application/json
+Responses
+Response content type
+
+application/json
+Code	Description
+200	
+Ok
+
+Example Value
+Model
+{
+  "id": 1,
+  "fio": "Иванов Иван Иванович",
+  "name": "Ваня",
+  "phone": "79876543210",
+  "birthday": "2024-01-08"
+}
+422	
+Error
+
+Example Value
+Model
+{
+  "message": "Error",
+  "errors": {
+    "fieldName": "Error"
+  }
+}
+hours
+Информация по занятиям в расписании
+
+
+GET
+​/hours
+Информация по расписанию
+
+Метод позволяет получить информацию о занятиях в расписании.
+
+Parameters
+Try it out
+Name	Description
+body *
+object
+(body)
+Объект данных из get
+
+Example Value
+Model
+{
+  "center": 1,
+  "schedules": 1,
+  "instructors": 1,
+  "typesExercises": 1,
+  "dateStart": "2024-01-20 00:00:00",
+  "dateEnd": "2024-01-25 23:59:59"
+}
+Parameter content type
+
+application/json
+Responses
+Response content type
+
+application/json
+Code	Description
+200	
+Ok
+
+Example Value
+Model
+{
+  "data": [
+    {
+      "id": 1,
+      "datetime": "2024-01-07 10:00:00",
+      "center": 1,
+      "comment": "Капризный ребенок",
+      "schedule": 1,
+      "instructors": [
+        1,
+        2,
+        3
+      ],
+      "duration": 60,
+      "typesExercise": 1,
+      "service": 1,
+      "version": 1,
+      "cnt": 4,
+      "isSigned": true,
+      "checkIndividual": true
+    },
+    {
+      "id": 2,
+      "datetime": "2024-01-07 12:00:00",
+      "center": 1,
+      "comment": "Капризный родитель",
+      "schedule": 1,
+      "instructors": [
+        1,
+        2,
+        3
+      ],
+      "duration": 60,
+      "typesExercise": 2,
+      "service": 1,
+      "version": 1,
+      "cnt": 1,
+      "isSigned": true,
+      "checkIndividual": true
+    }
+  ]
+}
+422	
+Error
+
+Example Value
+Model
+{
+  "message": "Error",
+  "errors": {
+    "fieldName": "Error"
+  }
+}
+season-tickets
+Информация по продоваемым абонементам
+
+
+GET
+​/season-tickets
+Информация по абонементам
+
+Метод позволяет получить информацию по продоваемым абонементам.
+
+Parameters
+Try it out
+Name	Description
+body *
+object
+(body)
+Объект данных из get
+
+Example Value
+Model
+{
+  "serviceId": 1
+}
+Parameter content type
+
+application/json
+Responses
+Response content type
+
+application/json
+Code	Description
+200	
+Ok
+
+Example Value
+Model
+{
+  "data": [
+    {
+      "id": 1,
+      "name": "Плавание инд. 4 занятия",
+      "common": true,
+      "numberExercise": 4,
+      "price": 2000,
+      "currency": "руб.",
+      "pointsPrice": 0,
+      "description": "",
+      "validity": 1,
+      "periodTypeId": 1,
+      "periodType": "Дней",
+      "exerciseTypeId": 2,
+      "exerciseType": "Индивидуальное",
+      "startedTypeId": 1,
+      "startedType": "С момента покупки",
+      "center": 1
+    },
+    {
+      "id": 2,
+      "name": "Плавание груп. 8 занятия",
+      "common": true,
+      "numberExercise": 8,
+      "price": 3000,
+      "currency": "руб.",
+      "pointsPrice": 0,
+      "description": "",
+      "validity": 1,
+      "periodTypeId": 1,
+      "periodType": "Дней",
+      "exerciseTypeId": 1,
+      "exerciseType": "Групповое",
+      "startedTypeId": 1,
+      "startedType": "С момента покупки",
+      "center": 1
+    }
+  ]
+}
+422	
+Error
+
+Example Value
+Model
+{
+  "message": "Error",
+  "errors": {
+    "fieldName": "Error"
+  }
+}
+client-season-tickets
+Информация по купленным абонементам
+
+
+GET
+​/client-season-tickets
+Информация по бонементам клиента
+
+Метод позволяет получить информацию по купленным абонементам.
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Response content type
+
+application/json
+Code	Description
+200	
+Ok
+
+Example Value
+Model
+{
+  "data": [
+    {
+      "id": 1,
+      "clientId": 1,
+      "seasonTicketId": 1,
+      "seasonTicketName": "Плавание инд. 4 занятия",
+      "exerciseTypeId": 2,
+      "exerciseTypeName": "Индивидуальное",
+      "price": 2000,
+      "numberExercise": 4,
+      "startedTypeId": 1,
+      "startedTypeName": "С момента покупки",
+      "periodTypeId": 1,
+      "periodTypeName": "Дней",
+      "blockTypeId": 1,
+      "blockTypeName": "Активный",
+      "createdAt": "2024-01-24 13:23:12",
+      "balance": 4,
+      "validity": 1,
+      "validityDate": "2024-05-24",
+      "validityDays": 30
+    },
+    {
+      "id": 2,
+      "clientId": 1,
+      "seasonTicketId": 2,
+      "seasonTicketName": "Плавание груп. 8 занятия",
+      "exerciseTypeId": 1,
+      "exerciseTypeName": "Групповое",
+      "price": 3000,
+      "numberExercise": 8,
+      "startedTypeId": 1,
+      "startedTypeName": "С момента покупки",
+      "periodTypeId": 1,
+      "periodTypeName": "Дней",
+      "blockTypeId": 1,
+      "blockTypeName": "Активный",
+      "createdAt": "2024-01-24 13:23:12",
+      "balance": 4,
+      "validity": 1,
+      "validityDate": "2024-05-24",
+      "validityDays": 30
+    }
+  ]
+}
+422	
+Error
+
+Example Value
+Model
+{
+  "message": "Error",
+  "errors": {
+    "fieldName": "Error"
+  }
+}
+debts
+Информация по задолженности
+
+
+GET
+​/debts
+Информация о задолженности
+
+Метод позволяет получить информацию о задолженности.
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Response content type
+
+application/json
+Code	Description
+200	
+Ok
+
+Example Value
+Model
+{
+  "data": [
+    {
+      "centerId": 1,
+      "city": 1,
+      "address": "ул.Ленина, д.14",
+      "money": 1000,
+      "currency": "руб."
+    },
+    {
+      "centerId": 2,
+      "city": 1,
+      "address": "ул.Победы, д.24",
+      "money": 500,
+      "currency": "руб."
+    }
+  ]
+}
+422	
+Error
+
+Example Value
+Model
+{
+  "message": "Error",
+  "errors": {
+    "fieldName": "Error"
+  }
+}
+payments
+Информация по эквайрингу
+
+
+GET
+​/payments
+Информация по эквайрингу
+
+Метод позволяет получить информацию по эквайрингу.
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Response content type
+
+application/json
+Code	Description
+200	
+Ok
+
+Example Value
+Model
+{}
+422	
+Error
+
+Example Value
+Model
+{
+  "message": "Error",
+  "errors": {
+    "fieldName": "Error"
+  }
+}
+PUT
+​/payments​/
+Информация по проведению платежа
+
+Метод позволяет обновить информацию по проведению платежа.
+
+Parameters
+Try it out
+Name	Description
+body *
+object
+(body)
+Объект данных для обновления информации
+
+Example Value
+Model
+{
+  "type": "",
+  "id": 1
+}
+Parameter content type
+
+application/json
+Responses
+Response content type
+
+application/json
+Code	Description
+200	
+Ok
+
+Example Value
+Model
+{
+  "errorCode": "304",
+  "error": "Нет связи с банком",
+  "paymentUrl": "https://yoomoney.ru/api-pages/v2/payment-confirm/cash?orderId=22c5d3e2-000f-5000-8000-10a783a9392b",
+  "paymentId": 1,
+  "status": "Success"
+}
+422	
+Error
+
+Example Value
+Model
+{
+  "message": "Error",
+  "errors": {
+    "fieldName": "Error"
+  }
+}
+client-hours
+Информация о занятиях клиента
+
+
+GET
+​/client-hours
+Информация о занятиях клиента
+
+Метод позволяет получить информацию о занятиях клиента.
+
+Parameters
+Try it out
+Name	Description
+body *
+object
+(body)
+Объект данных для обновления информации
+
+Example Value
+Model
+{
+  "clientId": 1,
+  "centerId": 1,
+  "dateStart": "2024-01-20 00:00:00",
+  "visited": 1,
+  "missed": 0
+}
+Parameter content type
+
+application/json
+Responses
+Response content type
+
+application/json
+Code	Description
+200	
+Ok
+
+Example Value
+Model
+{
+  "data": [
+    {
+      "id": 1,
+      "individual": true,
+      "trial": false,
+      "visited": "visited",
+      "missed": "",
+      "hour": [
+        {
+          "id": 2,
+          "datetime": "2024-01-07 12:00:00",
+          "center": 1,
+          "comment": "Капризный родитель",
+          "schedule": 1,
+          "instructors": [
+            1,
+            2,
+            3
+          ],
+          "duration": 60,
+          "typesExercise": 2,
+          "service": 1,
+          "version": 1,
+          "cnt": 1,
+          "isSigned": true,
+          "checkIndividual": true
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "individual": false,
+      "trial": false,
+      "visited": "",
+      "missed": "missed",
+      "hour": [
+        {
+          "id": 2,
+          "datetime": "2024-01-07 12:00:00",
+          "center": 1,
+          "comment": "Капризный родитель",
+          "schedule": 1,
+          "instructors": [
+            1,
+            2,
+            3
+          ],
+          "duration": 60,
+          "typesExercise": 2,
+          "service": 1,
+          "version": 1,
+          "cnt": 1,
+          "isSigned": true,
+          "checkIndividual": true
+        }
+      ]
+    }
+  ]
+}
+422	
+Error
+
+Example Value
+Model
+{
+  "message": "Error",
+  "errors": {
+    "fieldName": "Error"
+  }
+}
+POST
+​/client-hours​/
+Информация по записи клиента на занятие
+
+Метод позволяет обновить информацию по записи клиента на занятие.
+
+Parameters
+Try it out
+Name	Description
+body *
+object
+(body)
+Объект данных для обновления информации
+
+Example Value
+Model
+{
+  "hourId": 1,
+  "individual": "1",
+  "version": 1
+}
+Parameter content type
+
+application/json
+Responses
+Response content type
+
+application/json
+Code	Description
+200	
+Ok
+
+Example Value
+Model
+{
+  "id": 1,
+  "individual": true,
+  "trial": true,
+  "visited": "visited",
+  "missed": "missed",
+  "hour": [
+    {
+      "id": 2,
+      "datetime": "2024-01-07 12:00:00",
+      "center": 1,
+      "comment": "Капризный родитель",
+      "schedule": 1,
+      "instructors": [
+        1,
+        2,
+        3
+      ],
+      "duration": 60,
+      "typesExercise": 2,
+      "service": 1,
+      "version": 1,
+      "cnt": 1,
+      "isSigned": true,
+      "checkIndividual": true
+    }
+  ]
+}
+422	
+Error
+
+Example Value
+Model
+{
+  "message": "Error",
+  "errors": {
+    "fieldName": "Error"
+  }
+}

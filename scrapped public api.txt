@@ -1,0 +1,662 @@
+Go-CRM APIDOCS
+RETURN Go-CRM DEV DOCS
+Go-CRM Public API
+ 3.0.2 
+[ Base URL: beta.go-crm.ru/api/v3 ]
+/public.json
+Go-CRM Public API
+Представленные в этом разделе методы публичны и не требуют аутентификации.
+
+Schemes
+
+/leads
+Работа с Заявками
+
+
+POST
+​/leads
+Добавление новой заявки в ЦРМ
+Метод позволяет создать новую заявку в ЦРМ.
+В случае успеха, в ответе вы получите объект данных, содержищий информацию о созданной заявке (её идентификатор в системе и другие данные).
+В случае возникновения ошибок, вам вернётся исходный объект с переданными данными, а так же сообщение об ощибке.
+Например, при ошибке валидации поля name, дополнительно система вернёт:
+
+"message":"Validation error",,
+"validation_errors":"{ "name": "The name field is required." }".
+
+Parameters
+Try it out
+Name	Description
+body *
+object
+(body)	
+Объект данных для создания заявки
+
+Example Value
+Model
+{
+  "fio": "Мария Ивановна",
+  "name": "Вова",
+  "phone": "+79876543210",
+  "center_id": "1",
+  "birthday": "18.11.2019",
+  "mail": "youremail@youremaildomain.com",
+  "comment": "Тестовая заявка с сайта",
+  "utm": "yandex",
+  "way_id": 1,
+  "bot": ""
+}
+Parameter content type
+
+Responses
+Response content type
+
+Code	Description
+200	
+Пример ответа от сервера
+
+Example Value
+Model
+{
+  "status": "success",
+  "message": "",
+  "validation_errors": {},
+  "data": {
+    "id": "12345",
+    "name": "Вова",
+    "status": "bid",
+    "mail": "youremail@youremaildomain.com",
+    "center_id": "1",
+    "phone": "+79876543210",
+    "fio": "Мария Ивановна",
+    "birthday": "2019-11-18",
+    "comment": "Тестовая заявка с сайта",
+    "way_id": 1
+  }
+}
+/firms
+Работа с Компаниями
+
+
+GET
+​/firms
+Получение списка Компаний из ЦРМ
+Метод позволяет получить список Компаний, существующих в ЦРМ.
+В случае успеха, в ответе вы получите массив объектов данных, содержащих информацию о Компании.
+В случае возникновения ошибок, вам вернётся исходный объект с переданными данными, а так же сообщение об ошибке.
+
+Parameters
+Try it out
+No parameters
+Responses
+Response content type
+
+Code	Description
+200	
+Пример ответа от сервера
+
+Example Value
+Model
+{
+  "status": "success",
+  "message": "",
+  "data": [
+    {
+      "id": "12345",
+      "nameFirm": "ООО \"Зелёный лес\"",
+      "legalAddress": "ул. Лесная, д.1",
+      "actualAddress": "ул. Лесная, д.2",
+      "phone": "+79876543210",
+      "fax": "+79876543210",
+      "email": "green@forest.com",
+      "ogrn": "123457890",
+      "inn": "123457890",
+      "kpp": "123457890",
+      "director": "Иванов Е.С.",
+      "base": "Устав",
+      "bank": "ЗАО \"Самый лучший банк\"",
+      "bik": "1234567890",
+      "rs": "1234567890",
+      "ks": "1234567890",
+      "doc": "https://<you_link>",
+      "welcomeMessage": "Добро пожаловать!",
+      "createdAt": "2020-01-01 00:00:00"
+    }
+  ]
+}
+GET
+​/firms​/{id}
+Получение информации об конкретной Компании
+Метод позволяет получить информацию о конкретной Компании, существующей в ЦРМ.
+В случае успеха, в ответе вы получите объект данных, содержащий информацию о Компании.
+В случае возникновения ошибок, вам вернётся исходный объект с переданными данными, а так же сообщение об ошибке.
+
+Parameters
+Try it out
+Name	Description
+id *
+(path)	
+Идентификатор компании
+
+
+Responses
+Response content type
+
+Code	Description
+200	
+Пример ответа от сервера
+
+Example Value
+Model
+{
+  "status": "success",
+  "message": "",
+  "data": {
+    "id": "12345",
+    "nameFirm": "ООО \"Зелёный лес\"",
+    "legalAddress": "ул. Лесная, д.1",
+    "actualAddress": "ул. Лесная, д.2",
+    "phone": "+79876543210",
+    "fax": "+79876543210",
+    "email": "green@forest.com",
+    "ogrn": "123457890",
+    "inn": "123457890",
+    "kpp": "123457890",
+    "director": "Иванов Е.С.",
+    "base": "Устав",
+    "bank": "ЗАО \"Самый лучший банк\"",
+    "bik": "1234567890",
+    "rs": "1234567890",
+    "ks": "1234567890",
+    "doc": "https://<you_link>",
+    "welcomeMessage": "Добро пожаловать!",
+    "createdAt": "2020-01-01 00:00:00"
+  }
+}
+/cities
+Работа с Городами
+
+
+GET
+​/cities
+Получение информации об городах
+Метод позволяет получить информацию о городах, используемых в ЦРМ.
+В случае успеха, в ответе вы получите массив объектов данных, содержащий информацию о Городах.
+В случае возникновения ошибок, вам вернётся исходный объект с переданными данными, а так же сообщение об ошибке.
+
+Parameters
+Try it out
+No parameters
+Responses
+Response content type
+
+Code	Description
+200	
+Пример ответа от сервера
+
+Example Value
+Model
+{
+  "status": "success",
+  "message": "",
+  "data": [
+    {
+      "id": "12345",
+      "alias": "chelyabinsk",
+      "name": "Челябинск",
+      "site": "http[s]://<my-site.com>",
+      "countryId": 20,
+      "mobileAppWayId": 423
+    }
+  ]
+}
+GET
+​/cities​/{id}
+Получение информации об конкретном городе
+Метод позволяет получить информацию о конкретном городе, существующем в ЦРМ.
+В случае успеха, в ответе вы получите объект данных, содержащий информацию о городе.
+В случае возникновения ошибок, вам вернётся исходный объект с переданными данными, а так же сообщение об ошибке.
+
+Parameters
+Try it out
+Name	Description
+id *
+(path)	
+Идентификатор города
+
+
+Responses
+Response content type
+
+Code	Description
+200	
+Пример ответа от сервера
+
+Example Value
+Model
+{
+  "status": "success",
+  "message": "",
+  "data": {
+    "id": "12345",
+    "alias": "chelyabinsk",
+    "name": "Челябинск",
+    "site": "http[s]://<my-site.com>",
+    "countryId": 20,
+    "mobileAppWayId": 423
+  }
+}
+GET
+​/cities​/{id}​/centers
+Получение информации о центрах города
+Метод позволяет получить информацию о центрах определённого города.
+В случае успеха, в ответе вы получите массив объектов данных, содержащий информацию о центрах.
+В случае возникновения ошибок, вам вернётся исходный объект с переданными данными, а так же сообщение об ошибке.
+
+Parameters
+Try it out
+Name	Description
+id *
+(path)	
+Идентификатор центра
+
+
+Responses
+Response content type
+
+Code	Description
+200	
+Пример ответа от сервера
+
+Example Value
+Model
+{
+  "status": "success",
+  "message": "",
+  "data": [
+    {
+      "id": "12345",
+      "city": "Челябинск",
+      "cityAlias": "chelyabinsk",
+      "centerAlias": "forest",
+      "address": "ул. Лесная, д.3",
+      "phone": "+79876543210",
+      "email": "center@forest.com",
+      "cityId": 12345,
+      "firmId": 12345,
+      "timezone": "Asia/Yekaterinburg",
+      "description": "Наш центр самый лучший!",
+      "latitude": "59.123456",
+      "longitude": "29.123456",
+      "siteStatus": 1
+    }
+  ]
+}
+/centers
+Работа с Центрами
+
+
+GET
+​/centers​/{id}
+Получение информации об конкретном центре
+Метод позволяет получить информацию о конкретном центре, существующем в ЦРМ.
+В случае успеха, в ответе вы получите объект данных, содержащий информацию о центре.
+В случае возникновения ошибок, вам вернётся исходный объект с переданными данными, а так же сообщение об ошибке.
+
+Parameters
+Try it out
+Name	Description
+id *
+(path)	
+Идентификатор центра
+
+
+Responses
+Response content type
+
+Code	Description
+200	
+Пример ответа от сервера
+
+Example Value
+Model
+{
+  "status": "success",
+  "message": "",
+  "data": {
+    "id": "12345",
+    "city": "Челябинск",
+    "cityAlias": "chelyabinsk",
+    "centerAlias": "forest",
+    "address": "ул. Лесная, д.3",
+    "phone": "+79876543210",
+    "email": "center@forest.com",
+    "cityId": 12345,
+    "firmId": 12345,
+    "timezone": "Asia/Yekaterinburg",
+    "description": "Наш центр самый лучший!",
+    "latitude": "59.123456",
+    "longitude": "29.123456",
+    "siteStatus": 1
+  }
+}
+/users
+Работа с Сотрудниками
+
+
+GET
+​/users
+Получение информации о сотрудниках
+Метод позволяет получить информацию о сотрудниках.
+В случае успеха, в ответе вы получите массив объектов данных, содержащий информацию о сотрудниках.
+В случае возникновения ошибок, вам вернётся исходный объект с переданными данными, а так же сообщение об ошибке.
+
+Parameters
+Try it out
+Name	Description
+centerId
+(query)	
+isDisplay
+(query)	
+position
+(query)	
+Responses
+Response content type
+
+Code	Description
+200	
+Пример ответа от сервера
+
+Example Value
+Model
+{
+  "status": "success",
+  "message": "",
+  "data": [
+    {
+      "id": "12345",
+      "login": "Mark05",
+      "name": "Mark",
+      "displayName": "Markus",
+      "isDisplay": true,
+      "description": "Lorem Ipsum - это текст-\"рыба\", часто используемый в печати и вэб-дизайне. Lorem Ipsum является стандартной \"рыбой\" для текстов на латинице с начала XVI века. В то время некий безымянный печатник создал большую коллекцию размеров и форм шрифтов, используя Lorem Ipsum для распечатки образцов. Lorem Ipsum не только успешно пережил без заметных изменений пять веков, но и перешагнул в электронный дизайн. Его популяризации в новое время послужили публикация листов Letraset с образцами Lorem Ipsum в 60-х годах и, в более недавнее время, программы электронной вёрстки типа Aldus PageMaker, в шаблонах которых используется Lorem Ipsum.",
+      "photo": "https://beta.go-crm.ru/uploads/original.png",
+      "position": 4,
+      "centerId": 12345,
+      "center": {
+        "id": "12345",
+        "city": "Челябинск",
+        "cityAlias": "chelyabinsk",
+        "centerAlias": "forest",
+        "address": "ул. Лесная, д.3",
+        "phone": "+79876543210",
+        "email": "center@forest.com",
+        "cityId": 12345,
+        "firmId": 12345,
+        "timezone": "Asia/Yekaterinburg",
+        "description": "Наш центр самый лучший!",
+        "latitude": "59.123456",
+        "longitude": "29.123456",
+        "siteStatus": 1
+      }
+    }
+  ]
+}
+Models
+ApiResponse{
+status*	string
+Статус выполнения операции на сервере
+
+Enum:
+Array [ 3 ]
+message	string
+example:
+Сообщение, в случае возникновения ошибки.
+
+validation_errors	{...}
+example: OrderedMap {}
+data*	{...}
+example: OrderedMap {}
+}
+Lead{
+id	integer($int64)
+example: 12345
+Уникадьный идентификатор заявки
+
+name*	string
+example: Вова
+Имя Ребёнка
+
+status	string
+example: bid
+Статус заявки в системе
+
+mail	string
+example: youremail@youremaildomain.com
+Электронная почта
+
+center_id*	integer($int64)
+example: 1
+Идентификатор центра посещения
+
+phone*	string
+example: +79876543210
+Номер телефона
+
+fio	string
+example: Мария Ивановна
+ФИО Родителя
+
+birthday*	string
+example: 2019-11-18
+Дата рождения (ГГГГ-ММ-ДД)
+
+comment	string
+example: Тестовая заявка с сайта
+Комментарий к заявке
+
+way_id	integer($int64)
+example: 1
+}
+Firm{
+id	integer($int64)
+example: 12345
+Уникадьный идентификатор компании
+
+nameFirm	string
+example: ООО "Зелёный лес"
+Наименование компании
+
+legalAddress	string
+example: ул. Лесная, д.1
+Юридический адрес
+
+actualAddress	string
+example: ул. Лесная, д.2
+Фактический адрес
+
+phone	string
+example: +79876543210
+Телефон
+
+fax	string
+example: +79876543210
+Факс
+
+email	string
+example: green@forest.com
+Электронный адрес
+
+ogrn	string
+example: 123457890
+ОГРН
+
+inn	string
+example: 123457890
+ИНН
+
+kpp	string
+example: 123457890
+КПП
+
+director	string
+example: Иванов Е.С.
+Директор
+
+base	string
+example: Устав
+Основания для ведения деятельности
+
+bank	string
+example: ЗАО "Самый лучший банк"
+Наименование банка
+
+bik	string
+example: 1234567890
+БИК банка
+
+rs	string
+example: 1234567890
+Расчётный счёт
+
+ks	string
+example: 1234567890
+Кор.счёт
+
+doc	string
+example: https://<you_link>
+ссылка на клиентский договор
+
+welcomeMessage	string
+example: Добро пожаловать!
+Приветственное сообщение
+
+createdAt	string
+example: 2020-01-01 00:00:00
+Дата добавления компании в систему в формате [ГГГГ-ММ-ДД чч:мм:сс]
+
+}
+City{
+id	integer($int64)
+example: 12345
+Уникадьный идентификатор города
+
+alias*	string
+example: chelyabinsk
+псевдоним города
+
+name*	string
+example: Челябинск
+Наименование города
+
+site	string
+example: http[s]://<my-site.com>
+ссылка на сайт
+
+countryId	integer($int64)
+example: 20
+default: 20
+Идентификатор страны
+
+mobileAppWayId	integer
+example: 423
+Идентификатор источника (для мобильного приложения)
+
+}
+Center{
+id	integer($int64)
+example: 12345
+Уникадьный идентификатор центра
+
+city*	string
+example: Челябинск
+Наименование города в котором находится центр
+
+cityAlias*	string
+example: chelyabinsk
+Псевдоним города в котором находится центр
+
+centerAlias*	string
+example: forest
+Псевдоним центра
+
+address*	string
+example: ул. Лесная, д.3
+Адрес центра
+
+phone	string
+example: +79876543210
+Номер телефона центра
+
+email	string
+example: center@forest.com
+Электронный адрес центра
+
+cityId*	integer($int64)
+example: 12345
+Идентификатор города в котором находится центр
+
+firmId*	integer($int64)
+example: 12345
+Идентификатор Компании которой центр принадлежит
+
+timezone*	string
+example: Asia/Yekaterinburg
+Временная зона для центра
+
+description	string
+example: Наш центр самый лучший!
+Описание для центра
+
+latitude	string
+example: 59.123456
+Широта
+
+longitude	string
+example: 29.123456
+Долгота
+
+siteStatus*	boolean
+example: 1
+Флаг для отображения на сайте
+
+}
+User{
+id*	integer($int64)
+example: 12345
+Уникадьный идентификатор пользователя
+
+login*	string
+example: Mark05
+Логин сотрудника
+
+name*	string
+example: Mark
+Имя
+
+displayName	string
+example: Markus
+Паблик имя сотрудника
+
+isDisplay	boolean
+example: true
+Флаг для определения публичности. Если false, то в ЦРМ запретили отображать пользователя.
+
+description	string
+example: Lorem Ipsum - это текст-"рыба", часто используемый в печати и вэб-дизайне. Lorem Ipsum является стандартной "рыбой" для текстов на латинице с начала XVI века. В то время некий безымянный печатник создал большую коллекцию размеров и форм шрифтов, используя Lorem Ipsum для распечатки образцов. Lorem Ipsum не только успешно пережил без заметных изменений пять веков, но и перешагнул в электронный дизайн. Его популяризации в новое время послужили публикация листов Letraset с образцами Lorem Ipsum в 60-х годах и, в более недавнее время, программы электронной вёрстки типа Aldus PageMaker, в шаблонах которых используется Lorem Ipsum.
+Бриф сотрудника
+
+photo	string
+example: https://beta.go-crm.ru/uploads/original.png
+ссылка на фото профиля
+
+position*	integer($int64)
+example: 4
+Идентификатор должности, 2 - Директор, 3 - Администратор, 4 - Инструктор
+
+centerId*	integer($int64)
+example: 12345
+Идентификатор центра
+
+center	Center{...}
+}

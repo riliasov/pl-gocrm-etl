@@ -1,0 +1,996 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Go-CRM `Public API` \nПредставленные в этом разделе методы публичны и не требуют аутентификации.",
+    "version": "3.0.2",
+    "title": "Go-CRM Public API"
+  },
+  "host": "beta.go-crm.ru",
+  "basePath": "/api/v3",
+  "tags": [
+    {
+      "name": "/leads",
+      "description": "Работа с Заявками"
+    },
+    {
+      "name": "/firms",
+      "description": "Работа с Компаниями"
+    },
+    {
+      "name": "/cities",
+      "description": "Работа с Городами"
+    },
+    {
+      "name": "/centers",
+      "description": "Работа с Центрами"
+    },
+    {
+      "name": "/users",
+      "description": "Работа с Сотрудниками"
+    }
+
+  ],
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/leads": {
+      "post": {
+        "tags": [
+          "/leads"
+        ],
+        "summary": "Добавление новой заявки в ЦРМ",
+        "description": "Метод позволяет создать новую заявку в ЦРМ. \nВ случае успеха, в ответе вы получите объект данных, содержищий информацию о созданной заявке (её идентификатор в системе и другие данные). \n В случае возникновения ошибок, вам вернётся исходный объект с переданными данными, а так же сообщение об ощибке. \nНапример, при ошибке валидации поля `name`, дополнительно система вернёт: \n\n`\"message\":\"Validation error\", `,\n`\"validation_errors\":\"{ \"name\": \"The name field is required.\" }\"`.",
+        "operationId": "addLead",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "description": "Объект данных для создания заявки",
+            "schema": {
+              "type": "object",
+              "required": [
+                "name",
+                "phone",
+                "birthday",
+                "center_id"
+              ],
+              "properties": {
+                "fio": {
+                  "description": "Имя Родителя",
+                  "type": "string",
+                  "example": "Мария Ивановна"
+                },
+                "name": {
+                  "description": "Имя ребёнка",
+                  "type": "string",
+                  "example": "Вова"
+                },
+                "phone": {
+                  "description": "Номер телефона",
+                  "type": "string",
+                  "example": "+79876543210"
+                },
+                "center_id": {
+                  "description": "Идентификатор центра посещения",
+                  "type": "integer",
+                  "example": "1"
+                },
+                "birthday": {
+                  "description": "Дата рождения (d.m.Y) ",
+                  "type": "string",
+                  "example": "18.11.2019"
+                },
+                "mail": {
+                  "description": "Электронная почта",
+                  "type": "string",
+                  "example": "youremail@youremaildomain.com"
+                },
+                "comment": {
+                  "description": "Комментарий к заявке",
+                  "type": "string",
+                  "example": "Тестовая заявка с сайта"
+                },
+                "utm": {
+                  "description": "UTM метка источника (не используется)",
+                  "type": "string",
+                  "example": "yandex"
+                },
+                "way_id": {
+                  "description": "Идентификатор источника в системе",
+                  "type": "integer",
+                  "example": 1
+                },
+                "bot": {
+                  "description": "Код приглашения (для телеграм бота)",
+                  "type": "string",
+                  "example": ""
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Пример ответа от сервера",
+            "schema": {
+              "type": "object",
+              "required": [
+                "status",
+                "data"
+              ],
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Статус выполнения операции на сервере",
+                  "enum": [
+                    "success",
+                    "error",
+                    "fail"
+                  ]
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Сообщение, в случае возникновения ошибки.",
+                  "example": ""
+
+                },
+                "validation_errors": {
+                  "type": "object",
+                  "description": "Сообщение, в случае возникновения ошибок валидации.",
+                  "properties": {
+                  }
+                },
+                "data": {
+                  "$ref": "#/definitions/Lead"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/firms": {
+      "get": {
+        "tags": [
+          "/firms"
+        ],
+        "summary": "Получение списка Компаний из ЦРМ",
+        "description": "Метод позволяет получить список Компаний, существующих в ЦРМ. \nВ случае успеха, в ответе вы получите массив объектов данных, содержащих информацию о Компании. \n В случае возникновения ошибок, вам вернётся исходный объект с переданными данными, а так же сообщение об ошибке. \n",
+        "operationId": "listFirms",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Пример ответа от сервера",
+            "schema": {
+              "type": "object",
+              "required": [
+                "status",
+                "data"
+              ],
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Статус выполнения операции на сервере",
+                  "enum": [
+                    "success",
+                    "error",
+                    "fail"
+                  ]
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Сообщение, в случае возникновения ошибки.",
+                  "example": ""
+
+                },
+
+                "data": {
+                  "type": "array",
+                  "items" : {
+                    "$ref": "#/definitions/Firm"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/firms/{id}": {
+      "get": {
+        "tags": [
+          "/firms"
+        ],
+        "summary": "Получение информации об конкретной Компании",
+        "description": "Метод позволяет получить информацию о конкретной Компании, существующей в ЦРМ. \nВ случае успеха, в ответе вы получите объект данных, содержащий информацию о Компании. \n В случае возникновения ошибок, вам вернётся исходный объект с переданными данными, а так же сообщение об ошибке. \n",
+        "operationId": "showFirm",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Идентификатор компании"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Пример ответа от сервера",
+            "schema": {
+              "type": "object",
+              "required": [
+                "status",
+                "data"
+              ],
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Статус выполнения операции на сервере",
+                  "enum": [
+                    "success",
+                    "error",
+                    "fail"
+                  ]
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Сообщение, в случае возникновения ошибки.",
+                  "example": ""
+
+                },
+
+                "data": {
+                  "type": "object",
+                  "$ref": "#/definitions/Firm"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cities": {
+      "get": {
+        "tags": [
+          "/cities"
+        ],
+        "summary": "Получение информации об городах",
+        "description": "Метод позволяет получить информацию о городах, используемых в ЦРМ. \nВ случае успеха, в ответе вы получите массив объектов данных, содержащий информацию о Городах. \n В случае возникновения ошибок, вам вернётся исходный объект с переданными данными, а так же сообщение об ошибке. \n",
+        "operationId": "listCities",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Пример ответа от сервера",
+            "schema": {
+              "type": "object",
+              "required": [
+                "status",
+                "data"
+              ],
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Статус выполнения операции на сервере",
+                  "enum": [
+                    "success",
+                    "error",
+                    "fail"
+                  ]
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Сообщение, в случае возникновения ошибки.",
+                  "example": ""
+
+                },
+
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/City"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cities/{id}": {
+      "get": {
+        "tags": [
+          "/cities"
+        ],
+        "summary": "Получение информации об конкретном городе",
+        "description": "Метод позволяет получить информацию о конкретном городе, существующем в ЦРМ. \nВ случае успеха, в ответе вы получите объект данных, содержащий информацию о городе. \n В случае возникновения ошибок, вам вернётся исходный объект с переданными данными, а так же сообщение об ошибке. \n",
+        "operationId": "showCity",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Идентификатор города"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Пример ответа от сервера",
+            "schema": {
+              "type": "object",
+              "required": [
+                "status",
+                "data"
+              ],
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Статус выполнения операции на сервере",
+                  "enum": [
+                    "success",
+                    "error",
+                    "fail"
+                  ]
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Сообщение, в случае возникновения ошибки.",
+                  "example": ""
+
+                },
+
+                "data": {
+                  "type": "object",
+                  "$ref": "#/definitions/City"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cities/{id}/centers": {
+      "get": {
+        "tags": [
+          "/cities"
+        ],
+        "summary": "Получение информации о центрах города",
+        "description": "Метод позволяет получить информацию о центрах определённого города. \nВ случае успеха, в ответе вы получите массив объектов данных, содержащий информацию о центрах. \n В случае возникновения ошибок, вам вернётся исходный объект с переданными данными, а так же сообщение об ошибке. \n",
+        "operationId": "listCenters",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Идентификатор центра"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Пример ответа от сервера",
+            "schema": {
+              "type": "object",
+              "required": [
+                "status",
+                "data"
+              ],
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Статус выполнения операции на сервере",
+                  "enum": [
+                    "success",
+                    "error",
+                    "fail"
+                  ]
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Сообщение, в случае возникновения ошибки.",
+                  "example": ""
+
+                },
+
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Center"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/centers/{id}": {
+      "get": {
+        "tags": [
+          "/centers"
+        ],
+        "summary": "Получение информации об конкретном центре",
+        "description": "Метод позволяет получить информацию о конкретном центре, существующем в ЦРМ. \nВ случае успеха, в ответе вы получите объект данных, содержащий информацию о центре. \n В случае возникновения ошибок, вам вернётся исходный объект с переданными данными, а так же сообщение об ошибке. \n",
+        "operationId": "showCenter",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Идентификатор центра"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Пример ответа от сервера",
+            "schema": {
+              "type": "object",
+              "required": [
+                "status",
+                "data"
+              ],
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Статус выполнения операции на сервере",
+                  "enum": [
+                    "success",
+                    "error",
+                    "fail"
+                  ]
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Сообщение, в случае возникновения ошибки.",
+                  "example": ""
+
+                },
+
+                "data": {
+                  "type": "object",
+                  "$ref": "#/definitions/Center"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": [
+          "/users"
+        ],
+        "summary": "Получение информации о сотрудниках",
+        "description": "Метод позволяет получить информацию о сотрудниках. \nВ случае успеха, в ответе вы получите массив объектов данных, содержащий информацию о сотрудниках. \n В случае возникновения ошибок, вам вернётся исходный объект с переданными данными, а так же сообщение об ошибке. \n",
+        "operationId": "listUsers",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "centerId",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "isDisplay",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "position",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 4
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Пример ответа от сервера",
+            "schema": {
+              "type": "object",
+              "required": [
+                "status",
+                "data"
+              ],
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Статус выполнения операции на сервере",
+                  "enum": [
+                    "success",
+                    "error",
+                    "fail"
+                  ]
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Сообщение, в случае возникновения ошибки.",
+                  "example": ""
+
+                },
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "ApiResponse": {
+      "type": "object",
+      "required": [
+        "status",
+        "data"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Статус выполнения операции на сервере",
+          "enum": [
+            "success",
+            "error",
+            "fail"
+          ]
+        },
+        "message": {
+          "type": "string",
+          "description": "Сообщение, в случае возникновения ошибки.",
+          "example": ""
+        },
+        "validation_errors": {
+          "type": "object",
+          "description": "Сообщение, в случае возникновения ошибок валидации.",
+          "properties": {},
+          "example": {}
+        },
+        "data": {
+          "type": "object",
+          "description": "Объекты передаваемых данных",
+          "properties": {},
+          "example": {}
+        }
+      }
+    },
+    "Lead": {
+      "type": "object",
+      "required": [
+        "name",
+        "center_id",
+        "birthday",
+        "phone"
+      ],
+
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Уникадьный идентификатор заявки",
+          "example": "12345"
+        },
+        "name": {
+          "type": "string",
+          "description": "Имя Ребёнка",
+          "example": "Вова"
+        },
+        "status": {
+          "type": "string",
+          "description": "Статус заявки в системе",
+          "example": "bid"
+        },
+        "mail": {
+          "type": "string",
+          "description": "Электронная почта",
+          "example": "youremail@youremaildomain.com"
+        },
+        "center_id": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Идентификатор центра посещения",
+          "example": "1"
+        },
+        "phone": {
+          "type": "string",
+          "description": "Номер телефона",
+          "example": "+79876543210"
+        },
+        "fio": {
+          "type": "string",
+          "description": "ФИО Родителя",
+          "example": "Мария Ивановна"
+        },
+        "birthday": {
+          "type": "string",
+          "description": "Дата рождения (ГГГГ-ММ-ДД)",
+          "example": "2019-11-18"
+        },
+        "comment": {
+          "type": "string",
+          "description": "Комментарий к заявке",
+          "example": "Тестовая заявка с сайта"
+        },
+        "way_id": {
+          "type": "integer",
+          "format": "int64",
+          "example": 1
+        }
+      }
+    },
+    "Firm": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Уникадьный идентификатор компании",
+          "example": "12345"
+        },
+        "nameFirm": {
+          "type": "string",
+          "description": "Наименование компании",
+          "example": "ООО \"Зелёный лес\""
+        },
+        "legalAddress": {
+          "type": "string",
+          "description": "Юридический адрес",
+          "example": "ул. Лесная, д.1"
+        },
+        "actualAddress": {
+          "type": "string",
+          "description": "Фактический адрес",
+          "example": "ул. Лесная, д.2"
+        },
+        "phone": {
+          "type": "string",
+          "description": "Телефон",
+          "example": "+79876543210"
+        },
+        "fax": {
+          "type": "string",
+          "description": "Факс",
+          "example": "+79876543210"
+        },
+        "email": {
+          "type": "string",
+          "description": "Электронный адрес",
+          "example": "green@forest.com"
+        },
+        "ogrn": {
+          "type": "string",
+          "description": "ОГРН",
+          "example": "123457890"
+        },
+        "inn": {
+          "type": "string",
+          "description": "ИНН",
+          "example": "123457890"
+        },
+        "kpp": {
+          "type": "string",
+          "description": "КПП",
+          "example": "123457890"
+        },
+
+        "director": {
+          "type": "string",
+          "description": "Директор",
+          "example": "Иванов Е.С."
+        },
+        "base": {
+          "type": "string",
+          "description": "Основания для ведения деятельности",
+          "example": "Устав"
+        },
+        "bank": {
+          "type": "string",
+          "description": "Наименование банка",
+          "example": "ЗАО \"Самый лучший банк\""
+        },
+        "bik": {
+          "type": "string",
+          "description": "БИК банка",
+          "example": "1234567890"
+        },
+        "rs": {
+          "type": "string",
+          "description": "Расчётный счёт",
+          "example": "1234567890"
+        },
+        "ks": {
+          "type": "string",
+          "description": "Кор.счёт",
+          "example": "1234567890"
+        },
+        "doc": {
+          "type": "string",
+          "description": "ссылка на клиентский договор",
+          "example": "https://<you_link>"
+        },
+        "welcomeMessage": {
+          "type": "string",
+          "description": "Приветственное сообщение",
+          "example": "Добро пожаловать!"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Дата добавления компании в систему в формате [ГГГГ-ММ-ДД чч:мм:сс]",
+          "example": "2020-01-01 00:00:00"
+        }
+      }
+    },
+    "City": {
+      "type": "object",
+      "required": [
+        "alias",
+        "name"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Уникадьный идентификатор города",
+          "example": "12345"
+        },
+        "alias": {
+          "type": "string",
+          "description": "псевдоним города",
+          "example": "chelyabinsk"
+        },
+        "name": {
+          "type": "string",
+          "description": "Наименование города",
+          "example": "Челябинск"
+        },
+        "site": {
+          "type": "string",
+          "description": "ссылка на сайт",
+          "example": "http[s]://<my-site.com>"
+        },
+        "countryId": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Идентификатор страны",
+          "example": 20,
+          "default": 20
+        },
+        "mobileAppWayId": {
+          "type": "integer",
+          "description": "Идентификатор источника (для мобильного приложения)",
+          "example": 423
+        }
+      }
+    },
+    "Center": {
+      "type": "object",
+      "required": [
+        "city",
+        "cityAlias",
+        "centerAlias",
+        "address",
+        "cityId",
+        "firmId",
+        "timezone",
+        "siteStatus"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Уникадьный идентификатор центра",
+          "example": "12345"
+        },
+        "city": {
+          "type": "string",
+          "description": "Наименование города в котором находится центр",
+          "example": "Челябинск"
+        },
+        "cityAlias": {
+          "type": "string",
+          "description": "Псевдоним города в котором находится центр",
+          "example": "chelyabinsk"
+        },
+        "centerAlias": {
+          "type": "string",
+          "description": "Псевдоним центра",
+          "example": "forest"
+        },
+        "address": {
+          "type": "string",
+          "description": "Адрес центра",
+          "example": "ул. Лесная, д.3"
+        },
+        "phone": {
+          "type": "string",
+          "description": "Номер телефона центра",
+          "example": "+79876543210"
+        },
+        "email": {
+          "type": "string",
+          "description": "Электронный адрес центра",
+          "example": "center@forest.com"
+        },
+        "cityId": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Идентификатор города в котором находится центр",
+          "example": 12345
+        },
+        "firmId": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Идентификатор Компании которой центр принадлежит",
+          "example": 12345
+        },
+        "timezone": {
+          "type": "string",
+          "description": "Временная зона для центра",
+          "example": "Asia/Yekaterinburg"
+        },
+        "description": {
+          "type": "string",
+          "description": "Описание для центра",
+          "example": "Наш центр самый лучший!"
+        },
+        "latitude": {
+          "type": "string",
+          "description": "Широта",
+          "example": "59.123456"
+        },
+        "longitude": {
+          "type": "string",
+          "description": "Долгота",
+          "example": "29.123456"
+        },
+        "siteStatus": {
+          "type": "boolean",
+          "description": "Флаг для отображения на сайте",
+          "example": 1
+        }
+      }
+    },
+    "User": {
+      "type": "object",
+      "required": [
+        "id",
+        "login",
+        "name",
+        "position",
+        "centerId"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Уникадьный идентификатор пользователя",
+          "example": "12345"
+        },
+        "login": {
+          "type": "string",
+          "description": "Логин сотрудника",
+          "example": "Mark05"
+        },
+        "name": {
+          "type": "string",
+          "description": "Имя",
+          "example": "Mark"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Паблик имя сотрудника",
+          "example": "Markus"
+        },
+        "isDisplay": {
+          "type": "boolean",
+          "description": "Флаг для определения публичности. Если false, то в ЦРМ запретили отображать пользователя.",
+          "example": true
+        },
+        "description": {
+          "type": "string",
+          "description": "Бриф сотрудника",
+          "example": "Lorem Ipsum - это текст-\"рыба\", часто используемый в печати и вэб-дизайне. Lorem Ipsum является стандартной \"рыбой\" для текстов на латинице с начала XVI века. В то время некий безымянный печатник создал большую коллекцию размеров и форм шрифтов, используя Lorem Ipsum для распечатки образцов. Lorem Ipsum не только успешно пережил без заметных изменений пять веков, но и перешагнул в электронный дизайн. Его популяризации в новое время послужили публикация листов Letraset с образцами Lorem Ipsum в 60-х годах и, в более недавнее время, программы электронной вёрстки типа Aldus PageMaker, в шаблонах которых используется Lorem Ipsum."
+        },
+        "photo": {
+          "type": "string",
+          "description": "ссылка на фото профиля",
+          "example": "https://beta.go-crm.ru/uploads/original.png"
+        },
+        "position": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Идентификатор должности, 2 - Директор, 3 - Администратор, 4 - Инструктор",
+          "example": 4
+        },
+        "centerId": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Идентификатор центра",
+          "example": 12345
+        },
+        "center": {
+          "type": "object",
+          "description": "Информация о центре, за которым закреплён сотрудник",
+          "$ref": "#/definitions/Center"
+        }
+      }
+    }
+  }
+}
