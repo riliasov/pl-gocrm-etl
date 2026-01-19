@@ -1,6 +1,6 @@
 venv/
 __pycache__/
 *.pyc
-data/gocrm.db
+data/planeta_gocrm.db
 exports/*.csv
 .env
